@@ -144,6 +144,8 @@ const Room = (props) => {
     }
   }
 
+  console.log(process.env.CL_ID);
+
   return (
     <div className="container">
       <div className="videocontbox">
