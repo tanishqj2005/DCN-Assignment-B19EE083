@@ -35,7 +35,6 @@ const Room = (props) => {
         userVideo.current.srcObject = stream;
         setdis(false);
       });
-
   }, []);
   useEffect(() => {
     async function fetchData() {
@@ -187,7 +186,7 @@ const Room = (props) => {
             }}
           >
             <GoogleLogin
-              clientId="473889804939-kogm6iao0p44dedeo650vs98qavh3dmg.apps.googleusercontent.com"
+              clientId={process.env.CL_ID}
               onSuccess={responseGoogle}
               isSignedIn={false}
               buttonText="Login"

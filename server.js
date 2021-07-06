@@ -52,9 +52,21 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
+
+    if (socketToRoom[socket.id]) {
+      delete socketToRoom[socket.id];
+    }
+    if (socketToName[socket.id]) {
+      delete socketToName[socket.id];
+    }
+
     if (room) {
       room = room.filter((id) => id !== socket.id);
       users[roomID] = room;
+
+      if (room.length === 0) {
+        delete users[roomID];
+      }
     }
 
     socket.broadcast.emit("user-left", socket.id);
