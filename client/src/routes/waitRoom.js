@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { GoogleLogin } from "react-google-login";
 import "./waitRoom.css";
+require('dotenv').config()
 
 const videoConstraints = {
   height: window.innerHeight / 2,
@@ -143,8 +144,6 @@ const Room = (props) => {
       ans = allusers + " people are in this call";
     }
   }
-
-  console.log(process.env.CL_ID);
 
   return (
     <div className="container">
