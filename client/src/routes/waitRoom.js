@@ -145,8 +145,6 @@ const Room = (props) => {
     }
   }
 
-  console.log(process.env.CL_ID);
-
   return (
     <div className="container">
       <div className="videocontbox">
@@ -189,7 +187,7 @@ const Room = (props) => {
             }}
           >
             <GoogleLogin
-              clientId={process.env.CL_ID}
+              clientId="473889804939-kogm6iao0p44dedeo650vs98qavh3dmg.apps.googleusercontent.com"
               onSuccess={responseGoogle}
               isSignedIn={false}
               buttonText="Login"
