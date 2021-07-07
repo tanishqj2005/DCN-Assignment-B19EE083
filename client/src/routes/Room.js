@@ -13,6 +13,7 @@ import {
   faPaperPlane,
   faComment,
   faCommentSlash,
+  faDesktop,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Room.css";
 
@@ -62,6 +63,7 @@ const Room = (props) => {
   const [username, setUserName] = useState("");
   const [cam, setCam] = useState(true);
   const [mic, setMic] = useState(true);
+  const [ScreenSharing, setScreenSharing] = useState(false);
   const msgEndRef = useRef();
   const [txt, settxt] = useState("");
   const [msgs, setmsgs] = useState([]);
@@ -282,7 +284,9 @@ const Room = (props) => {
 
   const leave = () => {
     userVideo.current.srcObject.getVideoTracks()[0].stop();
-    userVideo.current.srcObject.getAudioTracks()[0].stop();
+    if (!ScreenSharing) {
+      userVideo.current.srcObject.getAudioTracks()[0].stop();
+    }
     window.location.href = "/";
   };
 
@@ -342,6 +346,9 @@ const Room = (props) => {
   let allvideos = null;
 
   if (classn === "one") {
+    if (ScreenSharing) {
+      classn = "onewithsc";
+    }
     allvideos = (
       <div className="allvideos">
         <div className="rowvid">
@@ -397,6 +404,50 @@ const Room = (props) => {
     );
   }
 
+  const toggleScreenShare = () => {
+    if (!ScreenSharing) {
+      navigator.mediaDevices
+        .getDisplayMedia({ cursor: true })
+        .then((stream) => {
+          setScreenSharing(true);
+          let screenShareTrack = stream.getVideoTracks()[0];
+          userVideo.current.srcObject = stream;
+          peerReplaceTrack(screenShareTrack);
+          setPeers(peersRef.current);
+
+          screenShareTrack.onended = () => {
+            endScreenShare();
+          };
+        });
+    } else {
+      userVideo.current.srcObject.getVideoTracks()[0].stop();
+      endScreenShare();
+    }
+  };
+
+  const endScreenShare = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: videoConstraints, audio: true })
+      .then((stream) => {
+        let newvidTrack = stream.getVideoTracks()[0];
+        peerReplaceTrack(newvidTrack);
+        userVideo.current.srcObject = stream;
+        userVideo.current.srcObject.getVideoTracks()[0].enabled = cam;
+        userVideo.current.srcObject.getAudioTracks()[0].enabled = mic;
+        setScreenSharing(false);
+        setPeers(peersRef.current);
+      });
+  };
+
+  const peerReplaceTrack = (newTrack) => {
+    if (peersRef.current) {
+      peersRef.current.forEach((peer) => {
+        let oldTrack = peer.peer.streams[0].getVideoTracks()[0];
+        peer.peer.replaceTrack(oldTrack, newTrack, peer.peer.streams[0]);
+      });
+    }
+  };
+
   return (
     <div>
       <Container>
@@ -447,6 +498,9 @@ const Room = (props) => {
           <FontAwesomeIcon icon={faUserPlus} size="1x" color="white" />
         </div>
         {com}
+        <div className="icon" onClick={toggleScreenShare}>
+          <FontAwesomeIcon icon={faDesktop} size="1x" color="white" />
+        </div>
       </div>
     </div>
   );
