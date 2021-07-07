@@ -9,14 +9,15 @@
 }
 
 .one {
-  height: 93%;
+  height: 80%;
   width: 100%;
 }
 
 .two {
-  height: 100%;
+  height: 80%;
   width: 45%;
   margin: 15px;
+  margin-top: 5px;
 }
 
 .icon {

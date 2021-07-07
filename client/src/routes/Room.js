@@ -11,6 +11,8 @@ import {
   faVideoSlash,
   faUserPlus,
   faPaperPlane,
+  faComment,
+  faCommentSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Room.css";
 
@@ -63,6 +65,7 @@ const Room = (props) => {
   const msgEndRef = useRef();
   const [txt, settxt] = useState("");
   const [msgs, setmsgs] = useState([]);
+  const [showchat, setshowchat] = useState(true);
 
   useEffect(() => {
     if (!props.location.state) {
@@ -208,6 +211,24 @@ const Room = (props) => {
 
     setMic((mic) => !mic);
   };
+
+  let com = (
+    <div className="icon" onClick={() => setshowchat((x) => !x)}>
+      <FontAwesomeIcon icon={faComment} size="1x" color="white" />
+    </div>
+  );
+
+  if (!showchat) {
+    com = (
+      <div
+        className="icon"
+        style={{ backgroundColor: "red" }}
+        onClick={() => setshowchat((x) => !x)}
+      >
+        <FontAwesomeIcon icon={faCommentSlash} size="1x" color="white" />
+      </div>
+    );
+  }
 
   let vid = (
     <div className="icon" onClick={toggleCam}>
@@ -380,35 +401,37 @@ const Room = (props) => {
     <div>
       <Container>
         <div className="videos">{allvideos}</div>
-        <div className="chatbox">
-          <div class="chatbtitle">In-Call Messages</div>
-          <div className="chatbinfo">
-            Messages can only be seen by people in the call and are deleted when
-            the call ends.
-          </div>
-          <div className="allmessages" onScroll={() => {}}>
-            {msgs.map((msg) => {
-              return (
-                <Message
-                  key={Math.random()}
-                  by={msg.by}
-                  content={msg.content}
-                />
-              );
-            })}
-            <div ref={msgEndRef} />
-          </div>
-          <div className="chatbsend" onKeyDown={sendMsg1}>
-            <textarea
-              placeholder="Send a Message to everyone"
-              value={txt}
-              onChange={handlechange}
-            ></textarea>
-            <div style={{ cursor: "pointer" }} onClick={sendMsg}>
-              <FontAwesomeIcon icon={faPaperPlane} size="1x" color="black" />
+        {showchat ? (
+          <div className="chatbox">
+            <div class="chatbtitle">In-Call Messages</div>
+            <div className="chatbinfo">
+              Messages can only be seen by people in the call and are deleted
+              when the call ends.
+            </div>
+            <div className="allmessages" onScroll={() => {}}>
+              {msgs.map((msg) => {
+                return (
+                  <Message
+                    key={Math.random()}
+                    by={msg.by}
+                    content={msg.content}
+                  />
+                );
+              })}
+              <div ref={msgEndRef} />
+            </div>
+            <div className="chatbsend" onKeyDown={sendMsg1}>
+              <textarea
+                placeholder="Send a Message to everyone"
+                value={txt}
+                onChange={handlechange}
+              ></textarea>
+              <div style={{ cursor: "pointer" }} onClick={sendMsg}>
+                <FontAwesomeIcon icon={faPaperPlane} size="1x" color="black" />
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </Container>
       <div className="controls">
         {vid}
@@ -423,6 +446,7 @@ const Room = (props) => {
         <div className="icon" onClick={addUser}>
           <FontAwesomeIcon icon={faUserPlus} size="1x" color="white" />
         </div>
+        {com}
       </div>
     </div>
   );
