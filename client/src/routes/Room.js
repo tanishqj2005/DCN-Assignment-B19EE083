@@ -14,6 +14,8 @@ import {
   faComment,
   faCommentSlash,
   faDesktop,
+  faUser,
+  faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Room.css";
 
@@ -49,6 +51,10 @@ const Message = (props) => {
   );
 };
 
+const Par = (props) => {
+  return <div className="apar">{props.content}</div>;
+};
+
 const videoConstraints = {
   height: window.innerHeight / 2,
   width: window.innerWidth / 2,
@@ -67,7 +73,9 @@ const Room = (props) => {
   const msgEndRef = useRef();
   const [txt, settxt] = useState("");
   const [msgs, setmsgs] = useState([]);
+  const [allparti, setallparti] = useState(["You"]);
   const [showchat, setshowchat] = useState(true);
+  const [showparti, setshowparti] = useState(false);
 
   useEffect(() => {
     if (!props.location.state) {
@@ -95,7 +103,8 @@ const Room = (props) => {
           roomID,
           props.location.state.username
         );
-        socketRef.current.on("all users", (users) => {
+        socketRef.current.on("all users", (users, usernames) => {
+          setallparti((parti) => [...parti, ...usernames]);
           const peers = [];
           users.forEach((userID) => {
             const peer = createPeer(userID, socketRef.current.id, stream);
@@ -109,6 +118,7 @@ const Room = (props) => {
         });
 
         socketRef.current.on("user joined", (payload) => {
+          setallparti((parti) => [...parti, payload.username]);
           const peer = addPeer(payload.signal, payload.callerID, stream);
           peersRef.current.push({
             peerID: payload.callerID,
@@ -145,7 +155,8 @@ const Room = (props) => {
           }
         });
 
-        socketRef.current.on("user-left", (id) => {
+        socketRef.current.on("user-left", (id, name) => {
+          setallparti((parti) => parti.filter((p) => p !== name));
           const item = peersRef.current.find((p) => p.peerID === id);
           if (item) {
             item.peer.destroy();
@@ -214,8 +225,40 @@ const Room = (props) => {
     setMic((mic) => !mic);
   };
 
+  let par = (
+    <div
+      className="icon"
+      onClick={() => {
+        setshowchat(false);
+        setshowparti(false);
+      }}
+    >
+      <FontAwesomeIcon icon={faUser} size="1x" color="white" />
+    </div>
+  );
+
+  if (!showparti) {
+    par = (
+      <div
+        className="icon"
+        style={{ backgroundColor: "red" }}
+        onClick={() => {
+          setshowchat(false);
+          setshowparti(true);
+        }}
+      >
+        <FontAwesomeIcon icon={faUserSlash} size="1x" color="white" />
+      </div>
+    );
+  }
   let com = (
-    <div className="icon" onClick={() => setshowchat((x) => !x)}>
+    <div
+      className="icon"
+      onClick={() => {
+        setshowchat(false);
+        setshowparti(false);
+      }}
+    >
       <FontAwesomeIcon icon={faComment} size="1x" color="white" />
     </div>
   );
@@ -225,7 +268,10 @@ const Room = (props) => {
       <div
         className="icon"
         style={{ backgroundColor: "red" }}
-        onClick={() => setshowchat((x) => !x)}
+        onClick={() => {
+          setshowchat(true);
+          setshowparti(false);
+        }}
       >
         <FontAwesomeIcon icon={faCommentSlash} size="1x" color="white" />
       </div>
@@ -483,10 +529,26 @@ const Room = (props) => {
             </div>
           </div>
         ) : null}
+        {showparti ? (
+          <div className="chatbox">
+            <div class="chatbtitle">In-Call Participants</div>
+            <div className="chatbinfo">
+              Participants can only be seen by people in the call
+            </div>
+            <div className="allmessages">
+              {allparti.map((p) => {
+                return <Par key={Math.random()} content={p} />;
+              })}
+            </div>
+          </div>
+        ) : null}
       </Container>
       <div className="controls">
         {vid}
         {m}
+        <div className="icon" onClick={addUser}>
+          <FontAwesomeIcon icon={faUserPlus} size="1x" color="white" />
+        </div>
         <div
           className="icon"
           style={{ backgroundColor: "red" }}
@@ -494,10 +556,8 @@ const Room = (props) => {
         >
           <FontAwesomeIcon icon={faPhone} size="1x" color="white" />
         </div>
-        <div className="icon" onClick={addUser}>
-          <FontAwesomeIcon icon={faUserPlus} size="1x" color="white" />
-        </div>
         {com}
+        {par}
         <div className="icon" onClick={toggleScreenShare}>
           <FontAwesomeIcon icon={faDesktop} size="1x" color="white" />
         </div>

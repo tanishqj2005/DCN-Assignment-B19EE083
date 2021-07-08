@@ -32,13 +32,20 @@ io.on("connection", (socket) => {
 
     const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
 
-    socket.emit("all users", usersInThisRoom);
+    let allusernames = [];
+
+    for (let i = 0; i < usersInThisRoom.length; i++) {
+      allusernames.push(socketToName[usersInThisRoom[i]]);
+    }
+
+    socket.emit("all users", usersInThisRoom, allusernames);
   });
 
   socket.on("sending signal", (payload) => {
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
       callerID: payload.callerID,
+      username: socketToName[payload.callerID],
     });
   });
 
@@ -51,6 +58,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     const roomID = socketToRoom[socket.id];
+    const name = socketToName[socket.id];
     let room = users[roomID];
 
     if (socketToRoom[socket.id]) {
@@ -69,7 +77,7 @@ io.on("connection", (socket) => {
       }
     }
 
-    socket.broadcast.emit("user-left", socket.id);
+    socket.broadcast.emit("user-left", socket.id, name);
   });
 
   socket.on("sending message", (payload) => {

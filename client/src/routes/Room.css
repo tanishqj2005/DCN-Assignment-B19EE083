@@ -138,3 +138,12 @@ input:focus {
   margin: 10px;
   overflow-anchor: bottom;
 }
+
+.apar {
+  width: 90%;
+  margin: 10px;
+  overflow-anchor: bottom;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
