@@ -321,11 +321,18 @@ const Room = (props) => {
     );
   }
 
-  const addUser = () => {
-    prompt(
-      "Copy this link and send it to people you want to meet with",
-      window.location.href
-    );
+  const addUser = async () => {
+    let email = prompt("Enter the Email ID of the person you want to invite");
+    let url = window.location.href;
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, url }),
+    };
+    const response = await fetch("/sendemail", requestOptions);
+    const data = await response.json();
+
+    console.log(data);
   };
 
   const leave = () => {

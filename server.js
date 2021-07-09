@@ -103,6 +103,35 @@ app.post("/getpeople", (req, res) => {
   });
 });
 
+app.post("/sendemail", (req, res) => {
+  const email = req.body.email;
+  const url = req.body.url;
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASS,
+    },
+  });
+
+  var mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: "No Reply : Invitation to join an Ezy Meet",
+    text: `Please Join the Meet at ${url}.`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+
+  res.send("Email Sent");
+});
+
 if (process.env.PROD) {
   app.use(express.static(path.join(__dirname, "./client/build")));
   app.get("*", (req, res) => {
