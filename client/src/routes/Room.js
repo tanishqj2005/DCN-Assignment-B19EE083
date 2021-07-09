@@ -330,9 +330,6 @@ const Room = (props) => {
       body: JSON.stringify({ email, url }),
     };
     const response = await fetch("/sendemail", requestOptions);
-    const data = await response.json();
-
-    console.log(data);
   };
 
   const leave = () => {

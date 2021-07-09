@@ -7,6 +7,7 @@ const app = express();
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
 const server = http.createServer(app);
+const nodemailer = require("nodemailer");
 const socket = require("socket.io");
 const io = socket(server);
 
@@ -118,14 +119,12 @@ app.post("/sendemail", (req, res) => {
     from: process.env.EMAIL,
     to: email,
     subject: "No Reply : Invitation to join an Ezy Meet",
-    text: `Please Join the Meet at ${url}.`,
+    text: `You have been invited to join an ongoing Ezy Meet. Please Join the Meet at ${url}.`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
     } else {
-      console.log("Email sent: " + info.response);
     }
   });
 
