@@ -330,6 +330,9 @@ const Room = (props) => {
       body: JSON.stringify({ email, url }),
     };
     const response = await fetch("/sendemail", requestOptions);
+    const data = await response.json();
+
+    console.log(data);
   };
 
   const leave = () => {
@@ -381,7 +384,7 @@ const Room = (props) => {
     }
   };
 
-  const length = peers.length;
+  const length = peersRef.current.length;
   let classn = "";
   if (length === 0) {
     classn = "one";
@@ -423,7 +426,12 @@ const Room = (props) => {
             muted
             className={classn}
           />
-          <Video key={peers[0].peerID} peer={peers[0].peer} classn={classn} />;
+          <Video
+            key={peersRef.current[0].peerID}
+            peer={peersRef.current[0].peer}
+            classn={classn}
+          />
+          ;
         </div>
       </div>
     );
@@ -432,10 +440,20 @@ const Room = (props) => {
       <div className="allvideos">
         <div className="rowvid">
           <video ref={userVideo} autoPlay playsInline muted className={"two"} />
-          <Video key={peers[0].peerID} peer={peers[0].peer} classn={"two"} />;
+          <Video
+            key={peersRef.current[0].peerID}
+            peer={peersRef.current[0].peer}
+            classn={"two"}
+          />
+          ;
         </div>
         <div className="rowvid">
-          <Video key={peers[1].peerID} peer={peers[1].peer} classn={"two"} />;
+          <Video
+            key={peersRef.current[1].peerID}
+            peer={peersRef.current[1].peer}
+            classn={"two"}
+          />
+          ;
         </div>
       </div>
     );
@@ -444,11 +462,26 @@ const Room = (props) => {
       <div className="allvideos">
         <div className="rowvid">
           <video ref={userVideo} autoPlay playsInline muted className={"two"} />
-          <Video key={peers[0].peerID} peer={peers[0].peer} classn={"two"} />;
+          <Video
+            key={peersRef.current[0].peerID}
+            peer={peersRef.current[0].peer}
+            classn={"two"}
+          />
+          ;
         </div>
         <div className="rowvid">
-          <Video key={peers[1].peerID} peer={peers[1].peer} classn={"two"} />;
-          <Video key={peers[2].peerID} peer={peers[2].peer} classn={"two"} />;
+          <Video
+            key={peersRef.current[1].peerID}
+            peer={peersRef.current[1].peer}
+            classn={"two"}
+          />
+          ;
+          <Video
+            key={peersRef.current[2].peerID}
+            peer={peersRef.current[2].peer}
+            classn={"two"}
+          />
+          ;
         </div>
       </div>
     );
