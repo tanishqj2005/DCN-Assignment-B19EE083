@@ -9,6 +9,7 @@ import {
 import { GoogleLogin } from "react-google-login";
 import "./waitRoom.css";
 require('dotenv').config()
+// tanishq joshi B19EE083
 
 const videoConstraints = {
   height: window.innerHeight / 2,
